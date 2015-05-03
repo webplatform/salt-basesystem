@@ -1,6 +1,3 @@
-# ref: https://github.com/saltstack-formulas/docker-formula
-{%- set kernelrelease = salt['grains.get']('kernelrelease') %}
-
 Commonly used utilities:
   pkg.installed:
     - pkgs:
@@ -42,13 +39,3 @@ Remove non-needed packages:
       - at
       - avahi-daemon
       - avahi-utils
-
-Docker linux-kernel deps:
-  pkg.installed:
-    - pkgs:
-      - linux-image-extra-{{ kernelrelease }}
-      - aufs-tools
-  cmd.run:
-    - name: modprobe aufs
-    - unless: modinfo aufs > /dev/null 2>&1
-

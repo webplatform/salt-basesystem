@@ -15,10 +15,6 @@ Vagrant.configure(2) do |config|
     v.customize ["modifyvm", :id, "--memory", "4072"]
   end
 
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get install -yqq python-git
-  SHELL
-
   # ref: http://docs.vagrantup.com/v2/provisioning/salt.html
   config.vm.synced_folder "salt/states",  "/srv/salt"
   config.vm.synced_folder "basesystem",   "/srv/salt/basesystem"
