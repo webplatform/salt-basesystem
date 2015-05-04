@@ -87,8 +87,6 @@ vagrant ssh
 sudo salt-call state.highstate
 ```
 
-Refer to the notes left in `/home/vagrant/README.md` to see other work notes.
-
 
 
 ### Vagrant Sandbox utilities
@@ -98,12 +96,40 @@ Refer to the notes left in `/home/vagrant/README.md` to see other work notes.
 If your system uses Docker to run containers, you can use the [docker-formula](https://github.com/saltstack-formulas/docker-formula) on your servers
 but also you could need it while working on your vagrant box.
 
+Notice that if you’re using Mac OS X and use Docker, you are most likely using [*boot2docker*](http://boot2docker.io/);
+which is basically what this is about. The difference here is that we want to run containers in the same way we would in production.
+
 To use Vagrant within your Vagrant sandbox, make sure you first ran [local workspace sandbox](#Use as a local workspace), then;
 
 ```
 salt-call state.sls vagrantsandbox.docker
+```
+
+Since this will add kernel modules, you’ll have to reboot the Vagrant box.
+
+Once rebooted;
+
+Check if you have `aufs` enabled;
+
+```
+docker -D info
+...
+Storage Driver: aufs
+...
+```
+
+Then you can play with Docker.
+
+```
 docker pull ubuntu:trusty
-docker run -a ubuntu:trusty /bin/bash
+docker run -i -t ubuntu:trusty /bin/bash
 ```
 
 You’re now inside a Vagrant VM, *inside* a Docker container!
+
+```
+root@e3a7be5a2d3b:/# ps
+PID TTY   TIME      CMD
+  1 ?     00:00:00  bash
+ 17 ?     00:00:00  ps
+```
