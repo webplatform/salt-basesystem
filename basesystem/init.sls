@@ -7,6 +7,20 @@ Commonly used utilities:
       - vim
       - vim-common
 
+app-user:
+  user.present:
+    - fullname: Web Application runner user
+    - shell: /bin/bash
+    - home: /srv/appshomedir
+    - createhome: True
+    - system: True
+    - groups:
+      - www-data
+  file.directory:
+    - name: /srv/appshomedir
+    - user: app-user
+    - group: www-data
+
 # ref: http://hardenubuntu.com/initial-setup/system-updates
 unattended-upgrades:
   debconf.set:
