@@ -5,3 +5,18 @@
 python-git:
   pkg.installed
 
+vagrant:
+  user.present:
+    - createhome: False
+    - groups:
+      - www-data
+  group.present:
+    - addusers:
+      - webapps
+      - vagrant
+
+/srv/appshomedir/workspace:
+  file.symlink:
+    - target: /vagrant
+    - makedirs: True
+

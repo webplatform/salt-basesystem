@@ -7,19 +7,25 @@ Commonly used utilities:
       - vim
       - vim-common
 
-app-user:
+webapps:
   user.present:
     - fullname: Web Application runner user
     - shell: /bin/bash
-    - home: /srv/appshomedir
+    - home: /srv/webapps
     - createhome: True
     - system: True
+    - uid: 990
     - groups:
       - www-data
+  group.present:
+    - gid: 990
+    - system: True
+    - members:
+      - webapps
   file.directory:
-    - name: /srv/appshomedir
-    - user: app-user
-    - group: www-data
+    - name: /srv/webapps
+    - user: webapps
+    - group: webapps
 
 # ref: http://hardenubuntu.com/initial-setup/system-updates
 unattended-upgrades:

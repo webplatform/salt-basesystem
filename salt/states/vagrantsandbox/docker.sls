@@ -2,7 +2,9 @@
 {%- set kernelrelease = salt['grains.get']('kernelrelease') %}
 
 include:
+  - .
   - docker
+  - basesystem
 
 Docker linux-kernel deps:
   pkg.installed:
@@ -12,3 +14,20 @@ Docker linux-kernel deps:
   cmd.run:
     - name: modprobe aufs
     - unless: modinfo aufs > /dev/null 2>&1
+
+# ref: http://docs.docker.com/installation/ubuntulinux/#create-a-docker-group
+docker:
+  group.present:
+    - system: True
+    - addusers:
+      - webapps
+      - vagrant
+    - require:
+      - user: webapps
+
+/srv/webapps/containerdata:
+  file.directory:
+    - user: webapps
+    - group: webapps
+    - makedirs: True
+

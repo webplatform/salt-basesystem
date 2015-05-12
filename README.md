@@ -102,7 +102,7 @@ which is basically what this is about. The difference here is that we want to ru
 To use Vagrant within your Vagrant sandbox, make sure you first ran [local workspace sandbox](#Use as a local workspace), then;
 
 ```
-salt-call state.sls vagrantsandbox.docker
+sudo salt-call state.sls vagrantsandbox.docker
 ```
 
 Since this will add kernel modules, you’ll have to reboot the Vagrant box.
