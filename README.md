@@ -133,3 +133,19 @@ PID TTY   TIME      CMD
   1 ?     00:00:00  bash
  17 ?     00:00:00  ps
 ```
+
+
+#### Build a pip package for quick deployment using fpm
+
+If you want to skip any dependency to building pip/python package at setup time for a new VM,
+you can do the following from the sandbox, and share this to your private repository.
+
+Once you have your basesystem Vagrant ready, you can build your package with the following commands.
+
+    salt-call state.sls vagrantsandbox.python
+    salt-call state.sls vagrantsandbox.fpm
+    apt-get install -y python-pip
+    mv python-docker-compose_1.1.0_all.deb /vagrant/
+    fpm -s python --python-pip /usr/bin/pip -t deb docker-compose==1.1.0
+
+

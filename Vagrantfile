@@ -8,6 +8,19 @@ Vagrant.configure(2) do |config|
 
   config.vm.hostname = "basesystem.local"
 
+  if Vagrant.has_plugin?("vagrant-cachier")
+    # Configure cached packages to be shared between instances of the same base box.
+    # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
+    config.cache.scope = :box
+
+    config.cache.synced_folder_opts = {
+      type: :nfs,
+      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+    }
+    # ref: http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
+  end
+  config.cache.enable :apt
+
   config.vm.provider "virtualbox" do |v|
     v.name = config.vm.hostname
     # ref: http://www.virtualbox.org/manual/ch08.html
