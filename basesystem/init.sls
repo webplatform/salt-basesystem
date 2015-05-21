@@ -2,6 +2,7 @@ Commonly used utilities:
   pkg.installed:
     - pkgs:
       - screen
+      - tmux
       - htop
       - monkeytail
       - vim
