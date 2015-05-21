@@ -3,8 +3,7 @@
 [WebPlatform][wpd] infrastructure servers runs on the same GNU/Linux distribution; *Ubuntu Linux 14.04 LTS*.
 This *salt state* formula is meant to be applied to **every** server and containers we run.
 
-Idea is to have a workspace that’s as close as possible to what every server is running
-so that we can use it in production, but also use it for local development.
+Idea is to have a workspace that’s as close as possible to what every server/container we’re running.
 
 
 

@@ -1,3 +1,4 @@
+alias webapps='sudo -i su webapps'
 alias besu='sudo -H bash -l'
 alias scr='screen -dd -R'
 
