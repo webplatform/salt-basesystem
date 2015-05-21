@@ -52,6 +52,6 @@ base:
 ```
 
 Notice that only what’s in `basesystem/` will be used.
-The other folders are workspace helpers
-so you can *also* use this repository as a local workspace too.
+The other folders are workspace helpers.
 
+  [wpd]: https://www.webplatform.org/
