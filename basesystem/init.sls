@@ -59,3 +59,8 @@ Remove non-needed packages:
       - at
       - avahi-daemon
       - avahi-utils
+
+/etc/profile.d/shell_aliases.sh:
+  file.managed:
+    - source: salt://basesystem/files/shell_aliases
+

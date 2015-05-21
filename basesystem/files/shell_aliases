@@ -1,0 +1,67 @@
+alias besu='sudo -H bash -l'
+alias scr='screen -dd -R'
+
+lazy-mem () {
+  ps -ylC "$@" --sort:rss | awk '!/RSS/ { s+=$8 } END { printf "%s\n", "Total memory used:"; printf "%dM\n", s/1024 }'
+}
+
+# ref: http://www.commandlinefu.com/commands/view/3543/show-apps-that-use-internet-connection-at-the-moment.
+lazy-lsof-network-services() {
+  lsof -P -i -n | cut -f 1 -d " "| uniq | tail -n +2
+}
+
+lazy-openssl-read() {
+  openssl x509 -text -in $1 | more
+}
+
+lazy-lsof-socks(){
+  lsof -P -i -n | less
+}
+
+lazy-lsof() {
+  /usr/bin/lsof -w -l | less
+}
+
+lazy-util-trailing-whitespace() {
+  if [ -f "$1" ]; then
+    sed -i 's/[ \t]*$//' "$1"
+  fi
+}
+
+lazy-git-commiters() {
+  git shortlog -sn
+}
+
+# ref: http://stackoverflow.com/questions/26370185/how-do-criss-cross-merges-arise-in-git
+lazy-git-log() {
+  git log --graph --oneline --decorate --all
+}
+
+lazy-git-search-file() {
+  git log --all --name-only --pretty=format: | sort -u | grep "$1"
+}
+
+# ref: http://hardenubuntu.com/disable-services
+lazy-procs() {
+  initctl list | grep running
+}
+
+lazy-net-connections() {
+  netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+}
+
+lazy-util-webserver () {
+  python -m SimpleHTTPServer 8080
+}
+
+lazy-util-conv-yml-json () {
+  if [ -f "$1" ]; then
+    python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=2)' < $1 > $1.new.json
+  fi
+}
+
+lazy-util-conv-json-yml () {
+  if [ -f "$1" ]; then
+    python -c 'import sys, yaml, json; yaml.safe_dump(json.load(sys.stdin),sys.stdout,allow_unicode=True,default_flow_style=False)' < $1 > $1.new.yml
+  fi
+}
