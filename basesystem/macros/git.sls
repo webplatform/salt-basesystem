@@ -18,8 +18,8 @@
  # ... and use in a state like this:
  #
  # {% from "basesystem/macros/git.sls" import git_clone_loop %}
- # {% set foobar = salt['pillar.get']('workbench:foo') %}
- # {{ git_clone_loop(foobar) }}
+ # {% set foo = salt['pillar.get']('foo') %}
+ # {{ git_clone_loop(foo) }}
  #}
 {% macro git_clone(creates, origin, args={}) %}
 

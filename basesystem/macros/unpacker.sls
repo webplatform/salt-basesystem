@@ -1,17 +1,30 @@
 {#
+ # Download a file and extract it somewhere
  #
+ # In pillar, you'd format like this:
  #
+ # foobar:
+ #   /opt/pypy:
+ #     href: https://bitbucket.org/pypy/pypy/downloads/pypy-2.5.1-linux.tar.bz2
+ #   /srv/webapps/publican/spec-data:
+ #     href: https://renoirboulanger.com/spec-data.tar.bz2
+ #     user: webapps
+ #
+ # ... and use in a state like this:
+ #
+ # {% from "basesystem/macros/unpacker.sls" import unpack_remote_loop %}
+ # {% set foobar = salt['pillar.get']('foobar') %}
+ # {{ unpack_remote_loop(foobar)}}
+ #
+ # ... or directly ...
+ #
+ # {{ unpack_remote('/opt/pypy', 'https://bitbucket.org/pypy/pypy/downloads/pypy-2.5.1-linux.tar.bz2') }}
  #}
 {% macro unpack_remote(creates, href, args={}) %}
 
 {% set user = args.get('user', None) %}
 
 {% set fileName = href.split('/')|last() %}
-
-{# grab tar.gz, tar.bz cases
-  {% if fileName.split('.')|count() >= 3 %}
-  {% set baseName = fileName.split('.')[0] %}
-#}
 
 {% set baseName = fileName.split('.')[0] %}
 
