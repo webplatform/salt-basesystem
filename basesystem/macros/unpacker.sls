@@ -1,36 +1,28 @@
 {#
- # Download a file and extract it somewhere
+ # Packer macros
  #
- # In pillar, you'd format like this:
+ # Pack and Unpack compressed archives
  #
- # foobar:
- #   /opt/pypy:
- #     href: https://bitbucket.org/pypy/pypy/downloads/pypy-2.5.1-linux.tar.bz2
- #   /srv/webapps/publican/spec-data:
- #     href: https://renoirboulanger.com/spec-data.tar.bz2
- #     user: webapps
- #
- # ... and use in a state like this:
- #
- # {% from "basesystem/macros/unpacker.sls" import unpack_remote_loop %}
- # {% set foobar = salt['pillar.get']('foobar') %}
- # {{ unpack_remote_loop(foobar)}}
- #
- # ... or directly ...
- #
- # {{ unpack_remote('/opt/pypy', 'https://bitbucket.org/pypy/pypy/downloads/pypy-2.5.1-linux.tar.bz2') }}
+ # This set of macro allows to download from a remote server
+ # into a folder and makes sure the file structure remains.
  #}
-{% macro unpack_remote(creates, href, args={}) %}
+
+
+
+{#
+ # Download and unpack an archive to a directory
+ #
+ # Refer to the [README.md](https://github.com/webplatform/salt-basesystem)
+ #}
+{% macro unpack_remote(href, dest, args={}) %}
 
 {% set user = args.get('user', None) %}
 
 {% set fileName = href.split('/')|last() %}
-
 {% set baseName = fileName.split('.')[0] %}
-
 {% set extension = fileName.split('.')|last() %}
 
-{% set downloadTo = creates.replace('/' ~ creates.split('/')|last(), '') %}
+{% set downloadTo = dest.replace('/' ~ dest.split('/')|last(), '') %}
 {% set expectedFilePath = downloadTo ~ '/' ~ fileName %}
 {% set expectedExtractedDir = downloadTo ~ '/' ~ baseName %}
 
@@ -43,12 +35,12 @@
 {% if extension == 'zip' %}
 {% set extractCommand = 'unzip ' ~ expectedFilePath ~ ' -d ' ~ downloadTo %}
 {% elif extension == 'bz2' %}
-{% set extractCommand = 'mkdir -p "' ~ creates ~ '" && tar xfj ' ~ expectedFilePath ~ ' --strip-components=1 -C "' ~ creates ~ '"' %}
+{% set extractCommand = 'mkdir -p "' ~ dest ~ '" && tar xfj ' ~ expectedFilePath ~ ' --strip-components=1 -C "' ~ dest ~ '"' %}
 {% elif extension == 'gz' %}
-{% set extractCommand = 'mkdir -p "' ~ creates ~ '" && tar xfz ' ~ expectedFilePath ~ ' --strip-components=1 -C "' ~ creates ~ '"' %}
+{% set extractCommand = 'mkdir -p "' ~ dest ~ '" && tar xfz ' ~ expectedFilePath ~ ' --strip-components=1 -C "' ~ dest ~ '"' %}
 {% endif %}
 
-Unpack {{ creates }}:
+Packager unpack {{ dest }}:
   file.directory:
     - name: {{ downloadTo }}
 {% if user %}
@@ -65,13 +57,13 @@ Unpack {{ creates }}:
         else
           echo {{ href }} | xargs wget -qO- -O {{ expectedFilePath }}; {{ extractCommand }}
         fi
-    - creates: {{ creates }}
+    - creates: {{ dest }}
     - cwd: {{ downloadTo }}
 {% if user %}
     - user: {{ user }}
 {% endif %}
 
-Archive {{ fileName }}:
+Packager cache to /var/cache/unpack/{{ fileName }}:
   file.directory:
     - name: /var/cache/unpack
   cmd.run:
@@ -80,13 +72,14 @@ Archive {{ fileName }}:
         chown root:root /var/cache/unpack/{{ fileName }}
     - onlyif: test -f {{ expectedFilePath }} && test ! -f /var/cache/unpack/{{ fileName }}
     - creates: /var/cache/unpack/{{ fileName }}
-
 {% endmacro %}
+
+
 
 {% macro unpack_remote_loop(list) %}
 {% if list|count >= 1 %}
-{% for creates,args in list.items() %}
-{{ unpack_remote(creates, args.href, args) }}
+{% for dest,args in list.items() %}
+{{ unpack_remote(args.href, dest, args) }}
 {% endfor %}
 {% endif %}
 {% endmacro %}

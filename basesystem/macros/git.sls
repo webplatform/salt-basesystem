@@ -1,25 +1,5 @@
 {#
- #
- # In pillar, you'd format like this:
- #
- # foo:
- #   /var/www/html:
- #     origin: https://github.com/webplatform/salt-basesystem.git
- #     user: vagrant
- #     auth_key: /home/vagrant/.ssh/id_rsa
- #   /srv/webapps/publican:
- #     origin: https://github.com/webplatform/publican.git
- #     branch: task-based-docker
- #     before:
- #       - /srv/webapps/publican/spec-data
- #     remotes:
- #       upstream: https://github.com/webspecs/publican.git
- #
- # ... and use in a state like this:
- #
- # {% from "basesystem/macros/git.sls" import git_clone_loop %}
- # {% set foo = salt['pillar.get']('foo') %}
- # {{ git_clone_loop(foo) }}
+ # Clone a git repository into a directory
  #}
 {% macro git_clone(creates, origin, args={}) %}
 
@@ -31,7 +11,7 @@
 
 {% set before_unpack_remote = args.get('before', []) %}
 
-Clone {{ creates }}:
+Git clone {{ creates }}:
   file.directory:
     - name: {{ creates }}
 {% if user %}
@@ -75,4 +55,43 @@ Clone {{ creates }}:
 {{ git_clone(dir, obj.origin, obj) }}
 {% endfor %}
 {% endif %}
+{% endmacro %}
+
+
+
+{% macro git_mirror(repo, dest, args={}) %}
+
+{% set user = args.get('user', 'root') %}
+{% set auth_key = args.get('auth_key', None) %}
+
+Git mirror {{ dest }}:
+  file.directory:
+    - name: {{ dest }}
+{% if user %}
+    - user: {{ user }}
+{% endif %}
+  git.latest:
+    - name: {{ repo }}
+    - target: {{ dest }}
+    - mirror: True
+    - onlyif: test ! -d {{ dest }}/.git
+{% if auth_key %}
+    - identity: {{ auth_key }}
+{% endif %}
+{% endmacro %}
+
+
+
+{% macro git_archive(local_repo, dest, branch='master') %}
+
+{% set slug = local_repo.split('/')|last() %}
+
+Git archive {{ local_repo }} to {{ dest }}:
+  file.directory:
+    - name: {{ dest }}
+  cmd.run:
+    - cwd: {{ local_repo }}
+    - name: git archive --prefix={{ slug }}/ --format zip -9 --output {{ dest }}/{{ slug }}-$(date +%Y%m%d-%H%M).zip {{ branch }}
+    - unless: test -f {{ dest }}/{{ slug }}-$(date +%Y%m%d-%H%M).zip
+    - stateful: True
 {% endmacro %}
