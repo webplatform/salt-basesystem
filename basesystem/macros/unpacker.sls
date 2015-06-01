@@ -49,11 +49,11 @@ Packager unpack {{ dest }}:
   pkg.installed:
     - name: {{ supportedHandlers[extension] }}
   cmd.run:
+    - stateful: True
     - name: |
         if [[ -f "/var/cache/unpack/{{ fileName }}" ]] ; then
           cp "/var/cache/unpack/{{ fileName }}" "{{ expectedFilePath }}"
           {{ extractCommand }}
-          rm "/var/cache/unpack/{{ fileName }}"
         else
           echo {{ href }} | xargs wget -qO- -O {{ expectedFilePath }}; {{ extractCommand }}
         fi
@@ -68,9 +68,12 @@ Packager cache to /var/cache/unpack/{{ fileName }}:
     - name: /var/cache/unpack
   cmd.run:
     - name: |
-        mv {{ expectedFilePath }} /var/cache/unpack/{{ fileName }}
-        chown root:root /var/cache/unpack/{{ fileName }}
-    - onlyif: test -f {{ expectedFilePath }} && test ! -f /var/cache/unpack/{{ fileName }}
+        if [[ ! -f "/var/cache/unpack/{{ fileName }}" ]] ; then
+          mv {{ expectedFilePath }} /var/cache/unpack/{{ fileName }}
+          chown root:root /var/cache/unpack/{{ fileName }}
+        else
+          rm {{ expectedFilePath }}
+        fi
     - creates: /var/cache/unpack/{{ fileName }}
 {% endmacro %}
 
