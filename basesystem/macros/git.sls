@@ -34,6 +34,7 @@ Git clone {{ creates }}:
 {% if auth_key %}
     - identity: {{ auth_key }}
 {% endif %}
+{% if remotes %}
 {% for remote_name,remote in remotes.items() %}
 {% if remote_name != 'origin' %}
   cmd.run:
@@ -42,6 +43,7 @@ Git clone {{ creates }}:
     - cwd: {{ creates }}
 {% if user %}
     - user: {{ user }}
+{% endif %}
 {% endif %}
 {% endif %}
 {% endfor %}
