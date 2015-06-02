@@ -45,8 +45,8 @@ Git clone {{ creates }}:
     - user: {{ user }}
 {% endif %}
 {% endif %}
-{% endif %}
 {% endfor %}
+{% endif %}
 {% endmacro %}
 
 
