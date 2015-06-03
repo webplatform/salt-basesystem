@@ -59,6 +59,7 @@ Packager unpack {{ dest }}:
         fi
     - creates: {{ dest }}
     - cwd: {{ downloadTo }}
+    - unless: test -d {{ dest }}
 {% if user %}
     - user: {{ user }}
 {% endif %}
