@@ -14,6 +14,7 @@
 Git clone {{ creates }}:
   file.directory:
     - name: {{ creates }}
+    - makedirs: True
 {% if user %}
     - user: {{ user }}
 {% endif %}
@@ -73,6 +74,7 @@ Git add remote {{ remote_name }} to {{ creates }}:
 Git mirror {{ dest }}:
   file.directory:
     - name: {{ dest }}
+    - makedirs: True
 {% if user %}
     - user: {{ user }}
 {% endif %}
