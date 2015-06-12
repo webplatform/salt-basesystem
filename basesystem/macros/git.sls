@@ -34,9 +34,10 @@ Git clone {{ creates }}:
 {% if auth_key %}
     - identity: {{ auth_key }}
 {% endif %}
-{% if remotes %}
+{%- if remotes -%}
 {% for remote_name,remote in remotes.items() %}
-{% if remote_name != 'origin' %}
+{%- if remote_name != 'origin' -%}
+Git add remote {{ remote_name }} to {{ creates }}:
   cmd.run:
     - name: git remote add {{ remote_name }} {{ remote }}
     - unless: grep -q -e 'remote "{{ remote_name }}' .git/config
@@ -44,16 +45,19 @@ Git clone {{ creates }}:
 {% if user %}
     - user: {{ user }}
 {% endif %}
-{% endif %}
+{%- endif -%}
 {% endfor %}
-{% endif %}
+{%- endif -%}
 {% endmacro %}
 
 
 
-{% macro git_clone_loop(list) %}
-{% if list|count >= 1 %}
+{% macro git_clone_loop(list, inject=None) %}
+{% if list.items()|count >= 1 %}
 {% for dir,obj in list.items() %}
+{% if inject %}
+{% do obj.update(inject) %}
+{% endif %}
 {{ git_clone(dir, obj.origin, obj) }}
 {% endfor %}
 {% endif %}
