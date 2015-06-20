@@ -72,7 +72,8 @@ Packager cache to /var/cache/unpack/{{ fileName }}:
         if [[ ! -f "/var/cache/unpack/{{ fileName }}" ]] ; then
           mv {{ expectedFilePath }} /var/cache/unpack/{{ fileName }}
           chown root:root /var/cache/unpack/{{ fileName }}
-        else
+        fi
+        if [[ -f "{{ expectedFilePath }}" ]] ; then
           rm {{ expectedFilePath }}
         fi
     - creates: /var/cache/unpack/{{ fileName }}
