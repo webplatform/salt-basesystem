@@ -103,3 +103,41 @@ Git archive {{ local_repo }} to {{ dest }}:
     - unless: test -f {{ dest }}/{{ slug }}-$(date +%Y%m%d-%H%M).zip
     - stateful: True
 {% endmacro %}
+
+
+
+{% macro git_latest(creates, origin, args={}) %}
+
+{% set user = args.get('user', None) %}
+{% set auth_key = args.get('auth_key', None) %}
+
+{% set branchName = args.get('branch', 'master') %}
+{% set remotes = args.get('remotes') %}
+
+{% set before_unpack_remote = args.get('before', []) %}
+
+Git latest {{ creates }}:
+  git.latest:
+    - name: {{ origin }}
+    - rev: {{ branchName }}
+    - target: {{ creates }}
+{% if user %}
+    - user: {{ user }}
+{% endif %}
+{% if auth_key %}
+    - identity: {{ auth_key }}
+{% endif %}
+{% endmacro %}
+
+
+
+{% macro git_latest_loop(list, inject=None) %}
+{% if list.items()|count >= 1 %}
+{% for dir,obj in list.items() %}
+{% if inject %}
+{% do obj.update(inject) %}
+{% endif %}
+{{ git_latest(dir, obj.origin, obj) }}
+{% endfor %}
+{% endif %}
+{% endmacro %}
