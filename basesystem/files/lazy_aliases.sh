@@ -1,6 +1,13 @@
+# Managed by Salt Stack
+# {{ source }}
+
 alias webapps='sudo -i su webapps'
 alias besu='sudo -H bash -l'
 alias scr='screen -dd -R'
+
+alias lazy_netstat='netstat -tulpn'
+alias lazy_gentoken='openssl rand -base64 32'
+alias lazy_git_shortlog='git shortlog -sn'
 
 lazy_mem () {
   ps -ylC "$@" --sort:rss | awk '!/RSS/ { s+=$8 } END { printf "%s\n", "Total memory used:"; printf "%dM\n", s/1024 }'
@@ -27,10 +34,6 @@ lazy_util_trailing_whitespace() {
   if [ -f "$1" ]; then
     sed -i 's/[ \t]*$//' "$1"
   fi
-}
-
-lazy_git_commiters() {
-  git shortlog -sn
 }
 
 # ref: http://stackoverflow.com/questions/26370185/how-do-criss-cross-merges-arise-in-git
@@ -64,5 +67,12 @@ lazy_util_conv_yml_json () {
 lazy_util_conv_json_yml () {
   if [ -f "$1" ]; then
     python -c 'import sys, yaml, json; yaml.safe_dump(json.load(sys.stdin),sys.stdout,allow_unicode=True,default_flow_style=False)' < $1 > $1.new.yml
+  fi
+}
+
+
+lazy_html_minify () {
+  if [ -f "$1" ]; then
+    cat $1 | tr '\t' ' ' | tr '\n' ' ' | sed 's/  //g' | sed 's/> </></g' > $1
   fi
 }

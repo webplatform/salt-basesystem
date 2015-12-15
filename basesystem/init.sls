@@ -1,13 +1,3 @@
-Commonly used utilities:
-  pkg.installed:
-    - pkgs:
-      - screen
-      - tmux
-      - htop
-      - monkeytail
-      - vim
-      - vim-common
-
 webapps:
   user.present:
     - fullname: Web Application runner user
@@ -27,6 +17,13 @@ webapps:
     - name: /srv/webapps
     - user: webapps
     - group: webapps
+
+/srv/webapps/.ssh:
+  file.directory:
+    - createdirs: True
+    - user: webapps
+    - group: webapps
+    - mode: 0700
 
 # ref: http://hardenubuntu.com/initial-setup/system-updates
 unattended-upgrades:
@@ -49,6 +46,9 @@ unattended-upgrades:
   file.managed:
     - source: salt://basesystem/files/irqbalance
 
+apt-transport-https:
+  pkg.installed
+
 # apport: ref: http://hardenubuntu.com/disable-services/disable-apport
 Remove non-needed packages:
   pkg.purged:
@@ -61,7 +61,8 @@ Remove non-needed packages:
       - avahi-daemon
       - avahi-utils
 
-/etc/profile.d/shell_aliases.sh:
+/etc/profile.d/lazy_aliases.sh:
   file.managed:
-    - source: salt://basesystem/files/shell_aliases
-
+    - source: salt://basesystem/files/lazy_aliases.sh
+    - mode: 755
+    - group: users
