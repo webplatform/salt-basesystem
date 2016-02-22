@@ -41,13 +41,30 @@ unattended-upgrades:
         DEBIAN_FRONTEND: noninteractive
         DEBCONF_NONINTERACTIVE_SEEN: "true"
 
+/etc/apt/apt.conf.d/20auto-upgrades:
+  file.managed:
+    - contents: |
+        APT::Periodic::Update-Package-Lists "1";
+        APT::Periodic::Unattended-Upgrade "1";
+
 # ref: http://hardenubuntu.com/server-setup/disable-irqbalance
 /etc/default/irqbalance:
   file.managed:
     - source: salt://basesystem/files/irqbalance
 
-apt-transport-https:
-  pkg.installed
+Timekeeping packages and APT over TLS:
+  pkg.installed:
+    - pkgs:
+      - ntp
+      - ntpdate
+      - apt-transport-https
+  file.managed:
+    - name: /etc/default/ntpdate
+    - contents: |
+        # Managed by Salt
+        NTPDATE_USE_NTP_CONF=yes
+        NTPSERVERS="us.pool.ntp.org"
+        NTPOPTIONS="-g"
 
 # apport: ref: http://hardenubuntu.com/disable-services/disable-apport
 Remove non-needed packages:
