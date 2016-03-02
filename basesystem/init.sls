@@ -25,6 +25,25 @@ webapps:
     - group: webapps
     - mode: 0700
 
+/etc/profile.d/lazy_aliases.sh:
+  file.managed:
+    - source: salt://basesystem/files/lazy_aliases.sh
+    - mode: 755
+    - group: users
+
+Ensure common package dependencies:
+  pkg.installed:
+    - pkgs:
+      - software-properties-common
+
+Global projects supported dependencies and locales:
+  pkg.installed:
+    - name: locales
+  cmd.run:
+    - names:
+      - locale-gen en_US.utf8
+      - dpkg-reconfigure locales
+
 # ref: http://hardenubuntu.com/initial-setup/system-updates
 unattended-upgrades:
   debconf.set:
@@ -77,9 +96,3 @@ Remove non-needed packages:
       - at
       - avahi-daemon
       - avahi-utils
-
-/etc/profile.d/lazy_aliases.sh:
-  file.managed:
-    - source: salt://basesystem/files/lazy_aliases.sh
-    - mode: 755
-    - group: users
