@@ -8,12 +8,12 @@
 
 Install WordPress {{ name }} plugin using {{ handler }}:
 {%- if handler == 'zip' %}
+  pkg.installed:
+    - name: unzip
   cmd.run:
     - name: echo https://downloads.wordpress.org/plugin/{{ name ~ '.' ~ versionIdentifier }}.zip | xargs wget -qO- -O  {{ wpDocroot }}/wp-content/plugins/{{ name }}.zip; unzip {{ wpDocroot }}/wp-content/plugins/{{ name }}.zip -d {{ wpDocroot }}/wp-content/plugins
     - unless: test -d {{ wpDocroot }}/wp-content/plugins/{{ name }}
     - creates: {{ wpDocroot }}/wp-content/plugins/{{ name ~ '.' ~ versionIdentifier }}.zip
-  pkg.installed:
-    - name: unzip
 {% endif -%}
 {%- if handler == 'git' %}
   git.latest:
