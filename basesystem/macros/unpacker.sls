@@ -57,6 +57,7 @@ Packager unpack {{ dest }}:
         else
           echo {{ href }} | xargs wget -qO- -O {{ expectedFilePath }}; {{ extractCommand }}
         fi
+        echo "changed=yes comment='Unpacked {{ fileName }} to {{ dest }}'"
     - creates: {{ dest }}
     - cwd: {{ downloadTo }}
     - unless: test -d {{ dest }}
@@ -76,6 +77,7 @@ Packager cache to /var/cache/unpack/{{ fileName }}:
         if [[ -f "{{ expectedFilePath }}" ]] ; then
           rm {{ expectedFilePath }}
         fi
+        echo "changed=yes comment='Cached to /var/cache/unpack/{{ fileName }}'"
     - creates: /var/cache/unpack/{{ fileName }}
 {% endmacro %}
 

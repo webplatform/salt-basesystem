@@ -15,26 +15,35 @@ Install WordPress {{ name }} plugin using {{ handler }}:
     - unless: test -d {{ wpDocroot }}/wp-content/plugins/{{ name }}
     - creates: {{ wpDocroot }}/wp-content/plugins/{{ name ~ '.' ~ versionIdentifier }}.zip
 {% endif -%}
+
 {%- if handler == 'git' %}
+  pkg.installed:
+    - name: git
   git.latest:
     - name: {{ gitRepo|default('https://github.com/wp-plugins/' ~ name) }}
     - rev: {{ versionIdentifier }}
     - target: {{ wpDocroot }}/wp-content/plugins/{{ name }}
     - unless: test -d {{ wpDocroot }}/wp-content/plugins/{{ name }}/.git
     - submodules: True
-  pkg.installed:
-    - name: git
 {% endif -%}
-{#
-{%- if handler == 'subversion' %}
+
+{#%- if handler == 'subversion' %}
 # NEEDS TESTING!!
 
+  pkg.installed:
+    - name: subversion
   svn.latest:
     - name: http://plugins.svn.wordpress.org/{{ name }}/tags/{{ versionIdentifier }}
     - target: {{ wpDocroot }}/wp-content/plugins/{{ name }}
-  pkg.installed:
-    - name: subversion
 
-{% endif -%}
-#}
+{% endif -%#}
+
 {%- endmacro %}
+
+{% macro wordpress_cronjob(name, wpDocroot, user='root') %}
+cd {{ wpDocroot }}; php -q wp-cron.php:
+  cron.present:
+    - user: {{ user }}
+    - minute: 0
+    - identifier: CRON-WordPress-{{ name }}
+{% endmacro %}

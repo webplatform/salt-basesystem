@@ -1,18 +1,5 @@
 {%- from "basesystem/macros/git.sls" import git_clone_loop -%}
 
-{#
- # formulas_repos should look like this in Python
- #
- # OrderedDict([('formulas', OrderedDict([('/srv/formulas/basesystem',
- #   OrderedDict([
- #     ('branch', 'master'),
- #     ('origin', 'https://github.com/renoirb/salt-basesystem.git'),
- #     ('remotes', OrderedDict([
- #       ('upstream', 'git@github.com:webplatform/salt-basesystem.git')
- #     ]))
- #   ])
- # )]))])
- #}
 {% macro formulas_clone(formulas_repos=[], roots_location_parent='/etc/salt/minion.d') %}
 
 {{ git_clone_loop(formulas_repos) }}
