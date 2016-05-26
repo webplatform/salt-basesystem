@@ -13,8 +13,9 @@ webapps:
     - system: True
     - members:
       - webapps
+
+/srv/webapps:
   file.directory:
-    - name: /srv/webapps
     - user: webapps
     - group: webapps
 

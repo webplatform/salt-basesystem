@@ -4,7 +4,9 @@
 {% macro git_clone(creates, origin, args={}) %}
 
 {% set user = args.get('user', None) %}
-{% set auth_key = args.get('auth_key', None) %}
+{% set identity = args.get('identity', None) %}
+
+{% set mirror = args.get('mirror', None) %}
 
 {% set branchName = args.get('branch', 'master') %}
 {% set remotes = args.get('remotes') %}
@@ -29,11 +31,15 @@ Git clone {{ creates }}:
     - rev: {{ branchName }}
     - target: {{ creates }}
     - unless: test -d {{ creates }}/.git
+    - force_fetch: True
+{% if mirror %}
+    - mirror: True
+{% endif %}
 {% if user %}
     - user: {{ user }}
 {% endif %}
-{% if auth_key %}
-    - identity: {{ auth_key }}
+{% if identity %}
+    - identity: {{ identity }}
 {% endif %}
 {%- if remotes -%}
 {% for remote_name,remote in remotes.items() %}
@@ -69,7 +75,7 @@ Git add remote {{ remote_name }} to {{ creates }}:
 {% macro git_mirror(repo, dest, args={}) %}
 
 {% set user = args.get('user', 'root') %}
-{% set auth_key = args.get('auth_key', None) %}
+{% set identity = args.get('identity', None) %}
 
 Git mirror {{ dest }}:
   file.directory:
@@ -83,8 +89,8 @@ Git mirror {{ dest }}:
     - target: {{ dest }}
     - mirror: True
     - onlyif: test ! -d {{ dest }}/.git
-{% if auth_key %}
-    - identity: {{ auth_key }}
+{% if identity %}
+    - identity: {{ identity }}
 {% endif %}
 {% endmacro %}
 
@@ -109,7 +115,7 @@ Git archive {{ local_repo }} to {{ dest }}:
 {% macro git_latest(creates, origin, args={}) %}
 
 {% set user = args.get('user', None) %}
-{% set auth_key = args.get('auth_key', None) %}
+{% set identity = args.get('identity', None) %}
 
 {% set branchName = args.get('branch', 'master') %}
 {% set remotes = args.get('remotes') %}
@@ -124,8 +130,8 @@ Git latest {{ creates }}:
 {% if user %}
     - user: {{ user }}
 {% endif %}
-{% if auth_key %}
-    - identity: {{ auth_key }}
+{% if identity %}
+    - identity: {{ identity }}
 {% endif %}
 {% endmacro %}
 
