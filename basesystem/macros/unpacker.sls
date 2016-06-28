@@ -65,7 +65,7 @@ Packager unpack {{ dest }}:
     - user: {{ user }}
 {% endif %}
 
-Packager cache to /var/cache/unpack/{{ fileName }}:
+Packager cache {{ href }} to /var/cache/unpack/{{ fileName }}:
   file.directory:
     - name: /var/cache/unpack
   cmd.run:
