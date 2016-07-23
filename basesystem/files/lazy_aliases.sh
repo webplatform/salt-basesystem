@@ -2,7 +2,7 @@
 # {{ source }}
 
 alias webapps='sudo -i su webapps'
-alias besu='sudo -H bash -l'
+alias besu='sudo -HE bash -l'
 alias scr='screen -dd -R'
 
 alias lazy_netstat='netstat -tulpn'
@@ -44,6 +44,20 @@ lazy_git_log() {
 lazy_git_search_file() {
   git log --all --name-only --pretty=format: | sort -u | grep "$1"
 }
+
+lazy_git_phplint_changed() {
+  git status -s | grep 'php$' | awk '{print $2}' | xargs -n1 php -l
+}
+
+lazy_git_phplint() {
+  if [[ $1 ]]; then
+    against="${1}"
+  else
+    against="HEAD"
+  fi
+  git diff-tree --no-commit-id --name-only --ignore-space-at-eol --pretty=oneline --abbrev-commit -r ${against} | grep 'php$' | xargs -n1 php -l
+}
+
 
 # ref: http://hardenubuntu.com/disable-services
 lazy_procs() {
